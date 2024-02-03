@@ -1,15 +1,12 @@
 import perceval as pcvl
 import perceval.components.unitary_components as comp
-import numpy as np
 
 ## Use the symbolic skin for display
-from perceval.rendering.circuit import DisplayConfig, SymbSkin, PhysSkin
+from perceval.rendering.circuit import DisplayConfig, SymbSkin
 from perceval.utils import StateVector
-DisplayConfig.select_skin(PhysSkin)
+DisplayConfig.select_skin(SymbSkin)
 
-sv = 0.5*(StateVector("|0, 0>") + StateVector("|1, 1>") + StateVector("|2, 2>") + StateVector("|3, 3>"))
 
-print(sv.samples(10))
 
 phi_discr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 discriminator = pcvl.Circuit(8)
@@ -33,52 +30,3 @@ discriminator.add(1, comp.PS(phi_discr[10]))
 discriminator.add(5, comp.PS(phi_discr[11]))
 
 pcvl.pdisplay(discriminator)
-
-
-# phi = np.pi
-# c = pcvl.Circuit(8)
-
-# c.add(1, comp.PS(phi))
-# c.add(2, comp.PS(phi))
-# c.add(3, comp.PS(phi))
-# c.add(5, comp.PS(phi))
-# c.add(6, comp.PS(phi))
-# c.add(7, comp.PS(phi))
-
-# c.add((1, 2), comp.BS())
-# c.add((5, 6), comp.BS())
-
-# c.add(1, comp.PS(phi))
-# c.add(5, comp.PS(phi))
-
-# c.add((1, 2), comp.BS())
-# c.add((5, 6), comp.BS())
-
-# c.add((0, 1), comp.BS())
-# c.add((2, 3), comp.BS())
-# c.add((4, 5), comp.BS())
-# c.add((6, 7), comp.BS())
-
-# c.add(0, comp.PS(phi))
-# c.add(2, comp.PS(phi))
-# c.add(4, comp.PS(phi))
-# c.add(6, comp.PS(phi))
-
-# c.add((0, 1), comp.BS())
-# c.add((2, 3), comp.BS())
-# c.add((4, 5), comp.BS())
-# c.add((6, 7), comp.BS())
-
-# c.add(1, comp.PS(phi))
-# c.add(5, comp.PS(phi))
-
-# c.add((1, 2), comp.BS())
-# c.add((5, 6), comp.BS())
-
-# c.add(1, comp.PS(phi))
-# c.add(5, comp.PS(phi))
-
-# c.add((1, 2), comp.BS())
-# c.add((5, 6), comp.BS())
-
-# pcvl.pdisplay(c)
