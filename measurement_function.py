@@ -1,4 +1,5 @@
 import perceval as pcvl
+import numpy as np
 import perceval.components.unitary_components as comp
 
 ## Use the symbolic skin for display
@@ -11,6 +12,9 @@ def g_objective(theta_g,theta_d):
     """
     Accepts two 1D np arrays corresponding to generator and discriminator parameters and returns a measurement of distance between gen and target
     """
+    theta_g = theta_g.tolist()
+    theta_d = theta_d.tolist()
+    
     init = pcvl.BasicState("|1, 0, 0, 0, 1, 0, 0, 0>") + pcvl.BasicState("|0, 1, 0, 0, 0, 1, 0, 0>") + pcvl.BasicState("|0, 0, 1, 0, 0, 0, 1, 0>") + pcvl.BasicState("|0, 0, 0, 1, 0, 0, 0, 1>")
     target = pcvl.BasicState("|1,0,0,0,0,1,0,0>")+pcvl.BasicState("|0,1,0,0,0,0,1,0>")+pcvl.BasicState("|0,0,1,0,0,0,0,1>")+pcvl.BasicState("|0,0,0,1,1,0,0,0>")
 
