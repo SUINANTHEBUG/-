@@ -1,5 +1,6 @@
 import perceval as pcvl
 import numpy as np
+from scipy.optimize import minimize
 import perceval.components.unitary_components as comp
 
 ## Use the symbolic skin for display
@@ -14,7 +15,7 @@ def g_objective(theta_g,theta_d):
     """
     theta_g = theta_g.tolist()
     theta_d = theta_d.tolist()
-    
+
     init = pcvl.BasicState("|1, 0, 0, 0, 1, 0, 0, 0>") + pcvl.BasicState("|0, 1, 0, 0, 0, 1, 0, 0>") + pcvl.BasicState("|0, 0, 1, 0, 0, 0, 1, 0>") + pcvl.BasicState("|0, 0, 0, 1, 0, 0, 0, 1>")
     target = pcvl.BasicState("|1,0,0,0,0,1,0,0>")+pcvl.BasicState("|0,1,0,0,0,0,1,0>")+pcvl.BasicState("|0,0,1,0,0,0,0,1>")+pcvl.BasicState("|0,0,0,1,1,0,0,0>")
 
@@ -176,6 +177,20 @@ def make_generator(Phi_list): #Phi_list is a list of 30 values for the Phase Shi
     generator.add(6, comp.PS(phi = Phi_list[29]))
 
     return generator
+
+
+def d_objective(theta_d,theta_g):
+    """Accepts two 1D np arrays corresponding to discriminator and generator parameters and returns a negative measurement of distance between gen and target"""
+    return -g_objective(theta_g, theta_d)
+
+num_rounds = 200
+theta_d,theta_g = np.array([]),np.array([])
+
+for i in range(num_rounds):
+    best_generator = minimize(g_objective, theta_g, method='nelder-mead', args = (theta_d), options={'xatol': 1e-8, 'disp': True})
+    theta_g = best_generator.x
+    best_discriminator = minimize(d_objective, theta_d, method='nelder-mead', args = (theta_g), options={'xatol': 1e-8, 'disp': True})
+    theta_d = best_discriminator.x
 
 def make_discriminator(phi_list):
     """
