@@ -12,7 +12,7 @@ def g_objective(theta_g,theta_d):
     Accepts two 1D np arrays corresponding to generator and discriminator parameters and returns a measurement of distance between gen and target
     """
     init = pcvl.BasicState("|1, 0, 0, 0, 1, 0, 0, 0>") + pcvl.BasicState("|0, 1, 0, 0, 0, 1, 0, 0>") + pcvl.BasicState("|0, 0, 1, 0, 0, 0, 1, 0>") + pcvl.BasicState("|0, 0, 0, 1, 0, 0, 0, 1>")
-    target = 0.5*(StateVector("|0, 1>") + StateVector("|1, 2>") + StateVector("|2, 3>") + StateVector("|3, 0>"))
+    target = pcvl.BasicState("|1,0,0,0,0,1,0,0>")+pcvl.BasicState("|0,1,0,0,0,0,1,0>")+pcvl.BasicState("|0,0,1,0,0,0,0,1>")+pcvl.BasicState("|0,0,0,1,1,0,0,0>")
 
     generator = make_generator(theta_g)
     discriminator = make_discriminator(theta_d)
@@ -20,9 +20,9 @@ def g_objective(theta_g,theta_d):
     full = pcvl.Circuit(8).add(0, generator, merge=True).add(0, discriminator, merge=True)
 
     prob_22_init = measure(full, init)
-    print(prob_22_init)
-    # prob_22_target = measure(discriminator, target)
-    # print(prob_22_target)
+    prob_22_target = measure(discriminator, target)
+
+    return abs(prob_22_target - prob_22_init)
 
 def measure(circuit, state):
     backend = pcvl.BackendFactory.get_backend("SLOS")
@@ -30,7 +30,8 @@ def measure(circuit, state):
     sim = pcvl.Simulator(backend)
     sim.set_circuit(circuit)
 
-    return sim.probs_svd(pcvl.SVDistribution(sim.evolve(state)))["results"]
+    distr = sim.probs_svd(pcvl.SVDistribution(sim.evolve(state)))["results"]
+    return list(distr.items())[2][1]
 
 
 def make_generator(Phi_list): #Phi_list is a list of 30 values for the Phase Shifter parameters
@@ -199,4 +200,4 @@ def make_discriminator(phi_list):
 
     return discriminator
 
-print(g_objective([0, 0, 0, 0.1, 0, 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
+print(g_objective([0, 0, 0, 0.1, 0, 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0], [0, 0.2, 0, 0.5, 0, 0, 0, 0.8, 0, 0, 0.9, 0]))
