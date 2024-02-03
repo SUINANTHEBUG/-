@@ -17,14 +17,19 @@ def g_objective(theta_g,theta_d):
     generator = make_generator(theta_g)
     discriminator = make_discriminator(theta_d)
 
+    # combine gen and discr into one circuit
     full = pcvl.Circuit(8).add(0, generator, merge=True).add(0, discriminator, merge=True)
 
-    prob_22_init = measure(full, init)
-    prob_22_target = measure(discriminator, target)
+    prob_22_init = measure(full, init) # measurement of generated state
+    prob_22_target = measure(discriminator, target) # measurement of target state
 
-    return abs(prob_22_target - prob_22_init)
+    return abs(prob_22_target - prob_22_init) # compare generated and target states
 
 def measure(circuit, state):
+    """
+    Accepts a circuit and a state. Runs the state through the circuit & retrieves probability
+    distribution, then returns the value for |2, 2>
+    """
     backend = pcvl.BackendFactory.get_backend("SLOS")
 
     sim = pcvl.Simulator(backend)
@@ -200,4 +205,5 @@ def make_discriminator(phi_list):
 
     return discriminator
 
-print(g_objective([0, 0, 0, 0.1, 0, 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0], [0, 0.2, 0, 0.5, 0, 0, 0, 0.8, 0, 0, 0.9, 0]))
+# test with random values
+# print(g_objective([0, 0, 0, 0.1, 0, 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0], [0, 0.2, 0, 0.5, 0, 0, 0, 0.8, 0, 0, 0.9, 0]))
