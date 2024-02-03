@@ -19,17 +19,18 @@ def g_objective(theta_g,theta_d):
 
     full = pcvl.Circuit(8).add(0, generator, merge=True).add(0, discriminator, merge=True)
 
-    measure(full, init)
-    # measure(discriminator, target)
+    prob_22_init = measure(full, init)
+    print(prob_22_init)
+    # prob_22_target = measure(discriminator, target)
+    # print(prob_22_target)
 
 def measure(circuit, state):
-    backend = pcvl.BackendFactory.get_backend("Naive")
+    backend = pcvl.BackendFactory.get_backend("SLOS")
 
-    p = pcvl.Processor("Naive", circuit, state)
-    analyzer = pcvl.algorithm.Analyzer(p, [pcvl.BasicState([1, 1, 1, 1, 1, 1, 1, 1])], '*')
-    pcvl.pdisplay(analyzer)
+    sim = pcvl.Simulator(backend)
+    sim.set_circuit(circuit)
 
-    return 0
+    return sim.probs_svd(pcvl.SVDistribution(sim.evolve(state)))["results"]
 
 
 def make_generator(Phi_list): #Phi_list is a list of 30 values for the Phase Shifter parameters
@@ -198,4 +199,4 @@ def make_discriminator(phi_list):
 
     return discriminator
 
-print(g_objective([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
+print(g_objective([0, 0, 0, 0.1, 0, 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
