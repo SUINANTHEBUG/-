@@ -9,7 +9,8 @@ pip install -r requirements.txt
 ```
 
 ## Project Structure
-- `measurement-function.py`: 
+- `qhack2024.ipynb`: Final code
+- `measurement-function.py`: Includes all the functions used in the project.
 - `discriminator.py`: Demonstrates discriminator circuit. 
 - `generator.py`: Demonstrates generator circiut. 
 - `print_duck_emoji.py` : Prints team name. 
